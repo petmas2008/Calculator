@@ -1,7 +1,9 @@
+import math
 WIDTH = 550
 HEIGHT = 500
 answer = 0
 bracket_counter = 0
+equal_counter = 0
 num0 = Actor("num0", bottomleft=(10, 490))
 
 num1 = Actor("num1", bottomleft=(10,400))
@@ -24,6 +26,7 @@ add_button = Actor("add_button", bottomleft=(340, 490))
 decimal_button = Actor("dot", bottomleft=(120, 490))
 delete_button = Actor("bin", bottomleft=(450, 490))
 brackets_button = Actor("brackets_button", bottomleft=(450, 400))
+power_button = Actor("power_button", bottomleft=(450, 310))
 
 list1 = []
 
@@ -47,13 +50,15 @@ def draw():
     decimal_button.draw()
     delete_button.draw()
     brackets_button.draw()
-    if answer != 0:
+    power_button.draw()
+    if equal_counter > 0:
         screen.draw.text(str(answer), midright=(WIDTH-10, 100), color=(0, 0, 0), fontsize=40)
     screen.draw.text("".join(list1), midright=(WIDTH-10, 50), color=(0, 0, 0), fontsize=50)
 
 def on_mouse_down(pos):
     x, y = pos
     global bracket_counter
+    global equal_counter
     global answer
     global list1
     answer = 0
@@ -65,10 +70,11 @@ def on_mouse_down(pos):
         if bracket_counter == 0:
             list1.append("(")
             bracket_counter += 1
-
         if bracket_counter == 2:
             bracket_counter = 0
 
+    if power_button.left < x < power_button.right and power_button.top < y < power_button.bottom:
+        list1.append(" ** ")
 
     if x_button.left < x < x_button.right and x_button.top < y < x_button.bottom:
         list1.append(" * ")
@@ -85,6 +91,7 @@ def on_mouse_down(pos):
     if equal_button.left < x < equal_button.right and equal_button.top < y < equal_button.bottom:
         new_list1 = "".join(list1)
         answer = eval(new_list1)
+        equal_counter = equal_counter + 1
 
     if num1.left < x < num1.right and num1.top < y < num1.bottom:
         list1.append("1")
@@ -122,5 +129,6 @@ def on_mouse_down(pos):
     if delete_button.left < x < delete_button.right and delete_button.top < y < delete_button.bottom:
         if len(list1) > 0:
             list1.clear()
+            equal_counter = 0
     print("List1:",list1)
     screen.clear()
